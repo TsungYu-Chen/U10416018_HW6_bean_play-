@@ -1,25 +1,27 @@
+
 //U10416018 陳宗佑
 
 import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
-import javafx.animation.Timeline;
-import javafx.application.Application;
-import javafx.scene.Scene;
+import java.security.SecureRandom;
+import javafx.scene.*;
 import javafx.scene.layout.Pane;
-import javafx.scene.paint.Color;
-import javafx.stage.Stage;
-import javafx.scene.shape.Line;
 import javafx.scene.shape.Circle;
+import javafx.scene.shape.Line;
+import javafx.scene.shape.LineTo;
+import javafx.scene.shape.MoveTo;
+import javafx.scene.shape.Path;
+import javafx.scene.shape.Polygon;
+import javafx.stage.Stage;
+import javafx.util.Duration;
+import javafx.scene.paint.*;
+import javafx.animation.Interpolator;
+import javafx.animation.PathTransition;
+import javafx.animation.PathTransition.OrientationType;
+import javafx.animation.Timeline;
+import javafx.application.*;
 
 public class BeanGame extends Application{
-	@Override
-	public void start(Stage primaryStage){
-		//Create a scene
-		Scene scene = new Scene(new GamePane(), 500, 500);
-		primaryStage.setTitle("Beangame");
-		primaryStage.setScene(scene);
-		primaryStage.show();
-	}
 	
 	class GamePane extends Pane{
 		public GamePane(){
@@ -141,9 +143,69 @@ public class BeanGame extends Application{
 			
 			Circle dot28 = new Circle(363,350,8,Color.RED);
 			
-			getChildren().addAll(dot1,dot2,dot3,dot4,dot5,dot6,dot7,dot8,dot9,dot10,dot11,dot12,dot13,dot14,dot15,dot16,dot17,dot18,dot19,dot20,dot21,dot22,dot23,dot24,dot25,dot28);
+			getChildren().addAll(dot1,dot2,dot3,dot4,dot5,dot6,dot7,dot8,dot9,dot10,dot11,dot12,dot13,dot14,dot15,dot16,dot17,dot18,dot19,dot20,dot21,dot22,dot23,dot24,dot25,dot26,dot27,dot28);
 			
 		}
 	}
-	
+	SecureRandom random = new SecureRandom();
+	GamePane gamePane = new GamePane();
+	@Override
+	public void start(Stage primaryStage) throws Exception{
+		gamePane.setOnMouseClicked(e -> {
+			MoveBall();
+        });
+		//設定視窗
+		Scene scene = new Scene(gamePane, 500, 500);
+		primaryStage.setTitle("Beangame");
+		primaryStage.setScene(scene);
+		primaryStage.show();
+	}
+	//製作會動的球
+	public void MoveBall(){
+		int x = 250,y=49;
+		int R = (int) (Math.random( )*256);
+        int G = (int)(Math.random( )*256);
+        int B = (int)(Math.random( )*256);
+       
+		Circle circle = new Circle();
+		circle.setCenterX(x);
+		circle.setCenterY(y);
+		circle.setRadius(7);
+		circle.setFill(Color.rgb(R,G,B));
+	    Path path = new Path();
+	    path.getElements().add(new MoveTo(x,y));
+	    y+=40;
+	    path.getElements().add(new LineTo(x,y));
+	    for(int i=1;i<=7;i++){
+	    	y+=40;
+	    	if(random.nextInt(2)==1){
+	    		x-=19;
+	    		
+	    	}else{
+	    		x+=19;
+	    	}
+	    	path.getElements().add(new LineTo(x,y));
+	    }
+	    path.getElements().add(new LineTo(x,y+63));
+		gamePane.getChildren().add(circle);
+	    PathTransition anim = new PathTransition();
+	    anim.setNode(circle);
+	    anim.setPath(path);
+	    anim.setOrientation(OrientationType.NONE);
+	    anim.setDuration(new Duration(10000));
+	    anim.setCycleCount(1);
+	    anim.setAutoReverse(false);
+	    anim.play();
+	}
+    public static void main(String[] args) {
+        Application.launch(args);
+	}
 }
+
+
+
+
+
+
+
+
